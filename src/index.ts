@@ -1,5 +1,13 @@
 import express, { type Request, type Response } from "express";
-import { query, validationResult, body } from "express-validator";
+
+import {
+  query,
+  validationResult,
+  matchedData,
+  checkSchema,
+} from "express-validator";
+
+import { createUserValidationSchema } from "./util/validationSchema";
 
 const app = express();
 
@@ -25,16 +33,17 @@ app.get(
 
 app.post(
   "/api/users",
-  body("name").isString().notEmpty(),
-  body("email").isEmail(),
+  checkSchema(createUserValidationSchema),
+
   (req: Request, res: Response) => {
     const results = validationResult(req);
     if (!results.isEmpty()) {
       return res.status(400).json({ errors: results.array() });
     }
 
-    const { name, email } = req.body;
-    return res.status(201).send({ msg: `User created: ${name}, ${email}` });
+    const data = matchedData(req);
+    const { username, email } = data;
+    return res.status(201).send({ msg: `User created: ${username}, ${email}` });
   },
 );
 app.listen(PORT, () => {
