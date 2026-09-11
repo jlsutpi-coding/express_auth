@@ -7,13 +7,13 @@ import {
   query,
 } from "express-validator";
 
-const router = express.Router();
+const userRouter = express.Router();
 
-router.get("/", (req: Request, res: Response) => {
+userRouter.get("/", (req: Request, res: Response) => {
   res.status(200).send({ msg: "User route is working!" });
 });
 
-router.get(
+userRouter.get(
   "",
 
   query("filter").isString().notEmpty(),
@@ -26,7 +26,7 @@ router.get(
   },
 );
 
-router.post(
+userRouter.post(
   "",
   checkSchema(createUserValidationSchema),
 
@@ -41,4 +41,4 @@ router.post(
     return res.status(201).send({ msg: `User created: ${username}, ${email}` });
   },
 );
-export default router;
+export default userRouter;
