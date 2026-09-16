@@ -8,6 +8,8 @@ appRouter.use("/api/users", userRouter);
 appRouter.use("/api/products", productsRouter);
 
 appRouter.get("/", (req, res) => {
+  console.log(req.session);
+  console.log(req.session.id);
   res.cookie("sessionId", "Nawram@154", {
     httpOnly: true,
     secure: true,
