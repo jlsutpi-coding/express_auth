@@ -21,7 +21,6 @@ userRouter.get(
     const { filter } = req.query;
 
     const results = validationResult(req);
-    console.log("Validation results:", results);
     return res.status(200).send({ msg: `Filter applied: ${filter}` });
   },
 );
