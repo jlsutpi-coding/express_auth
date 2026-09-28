@@ -2,6 +2,8 @@ import express, { type Request, type Response } from "express";
 import userRouter from "./user";
 import productsRouter from "./products";
 import { mockUsers } from "../util/constants";
+import "../strategies/local-strategy";
+
 const appRouter = express.Router();
 
 appRouter.use("/api/users", userRouter);
@@ -16,22 +18,22 @@ appRouter.get("/", (req, res) => {
   res.status(200).send({ msg: "Welcome to the API!" });
 });
 
-appRouter.post("/api/auth", (req: Request, res: Response) => {
-  const { username, password } = req.body;
+// appRouter.post("/api/auth", (req: Request, res: Response) => {
+//   const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).send({ msg: "Username and password are required." });
-  }
-  const user = mockUsers.find((u) => u.username === username);
-  if (!user || user.password !== password) {
-    return res.status(401).send({ msg: "Invalid username or password." });
-  }
+//   if (!username || !password) {
+//     return res.status(400).send({ msg: "Username and password are required." });
+//   }
+//   const user = mockUsers.find((u) => u.username === username);
+//   if (!user || user.password !== password) {
+//     return res.status(401).send({ msg: "Invalid username or password." });
+//   }
 
-  req.session.user = user;
-  return res
-    .status(200)
-    .send({ msg: "Authentication successful.", user: req.session.user });
-});
+//   req.session.user = user;
+//   return res
+//     .status(200)
+//     .send({ msg: "Authentication successful.", user: req.session.user });
+// });
 
 appRouter.get("/api/status", (req: Request, res: Response) => {
   req.sessionStore.get(req.sessionID, (err, session) => {
@@ -39,7 +41,6 @@ appRouter.get("/api/status", (req: Request, res: Response) => {
       console.error("Error retrieving session:", err);
       return res.status(500).send({ msg: "Internal server error." });
     }
-    console.log("Session data:", session);
   });
   return req.session.user
     ? res
