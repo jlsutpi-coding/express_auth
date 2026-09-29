@@ -1,8 +1,8 @@
 import express, { type Request, type Response } from "express";
 import userRouter from "./user";
 import productsRouter from "./products";
-import { mockUsers } from "../util/constants";
 import "../strategies/local-strategy";
+import { prisma } from "../lib/prisma";
 
 const appRouter = express.Router();
 
@@ -69,8 +69,9 @@ appRouter.post("/api/cart", (req: Request, res: Response) => {
   });
 });
 
-appRouter.get("/api/cart", (req: Request, res: Response) => {
+appRouter.get("/api/cart", async (req: Request, res: Response) => {
   if (!req.session.user) {
+    const user = await prisma.user.findMany({});
     return res.status(401).send({ msg: "User is not authenticated." });
   }
 
