@@ -21,10 +21,10 @@ passport.deserializeUser((id, done) => {
 });
 
 export default passport.use(
-  new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    console.log("Authenticating user with email:", email);
+  new LocalStrategy((username, password, done) => {
+    console.log("Authenticating user with username:", username);
     try {
-      const user = mockUsers.find((u) => u.email === email);
+      const user = mockUsers.find((u) => u.username === username);
       if (!user) {
         throw new Error("User not found");
       }

@@ -1,7 +1,9 @@
 import express, { type Request, type Response } from "express";
+
 import userRouter from "./user";
 import productsRouter from "./products";
 import "../strategies/local-strategy";
+
 import { prisma } from "../lib/prisma";
 
 const appRouter = express.Router();

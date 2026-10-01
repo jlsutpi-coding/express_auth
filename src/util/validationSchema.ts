@@ -11,12 +11,25 @@ export const createUserValidationSchema = {
       errorMessage: "Username must be a string",
     },
   },
-  email: {
-    isEmail: {
-      errorMessage: "Invalid email address",
+  displayName: {
+    isLength: {
+      option: { min: 2, max: 100 },
+      errorMessage: "Display name must be between 2 and 100 characters long",
+    },
+    isString: {
+      errorMessage: "Display name must be a string",
+    },
+  },
+  password: {
+    isLength: {
+      option: { min: 6, max: 100 },
+      errorMessage: "Password must be between 6 and 100 characters long",
     },
     notEmpty: {
-      errorMessage: "Email is required",
+      errorMessage: "Password is required",
+    },
+    isString: {
+      errorMessage: "Password must be a string",
     },
   },
 };
