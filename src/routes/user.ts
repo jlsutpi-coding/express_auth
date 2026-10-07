@@ -7,7 +7,7 @@ import {
   query,
 } from "express-validator";
 import { prisma } from "../lib/prisma";
-import { mockUsers } from "../util/constants";
+import type { Prisma } from "../../generated/prisma";
 
 const userRouter = express.Router();
 
@@ -37,17 +37,15 @@ userRouter.post(
       return res.status(400).json({ errors: results.array() });
     }
 
-    const data = matchedData(req);
+    const data = matchedData(req) as Prisma.UserCreateInput;
 
     try {
-      const createdUsers = await prisma.user.createMany({
-        data: [...mockUsers],
+      const createdUsers = await prisma.user.create({
+        data: data,
       });
 
-      console.log("Created users:", createdUsers);
-      return res
-        .status(201)
-        .send({ msg: `User created: ${createdUsers.count}` });
+      console.log("Created user:", createdUsers);
+      return res.status(201).send({ msg: `User created: ${createdUsers.id}` });
     } catch (error) {
       console.error("Error creating user:", error);
       return res.status(500).send({ msg: "Internal server error." });

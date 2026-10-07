@@ -1,18 +1,21 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { mockUsers } from "../util/constants";
+import { prisma } from "../lib/prisma";
 
 passport.serializeUser((user, done) => {
   console.log("Serializing user:", user);
   done(null, user.id);
 });
 
-passport.deserializeUser((id, done) => {
+passport.deserializeUser(async (id, done) => {
   console.log("Deserializing user with ID:", id);
   try {
-    const user = mockUsers.find((u) => u.id === id);
+    const user = await prisma.user.findUnique({
+      where: { id: id as number },
+    });
     if (!user) {
-      throw new Error("User not found");
+      return done(new Error("User not found"));
     }
     done(null, user);
   } catch (err) {
@@ -21,15 +24,17 @@ passport.deserializeUser((id, done) => {
 });
 
 export default passport.use(
-  new LocalStrategy((username, password, done) => {
+  new LocalStrategy(async (username, password, done) => {
     console.log("Authenticating user with username:", username);
     try {
-      const user = mockUsers.find((u) => u.username === username);
+      const user = await prisma.user.findFirst({
+        where: { username },
+      });
       if (!user) {
-        throw new Error("User not found");
+        return done(null, false, { message: "Invalid username or password." });
       }
       if (user.password !== password) {
-        throw new Error("Invalid password");
+        return done(null, false, { message: "Invalid username or password." });
       }
       return done(null, user);
     } catch (err) {
