@@ -20,25 +20,6 @@ appRouter.get("/", (req, res) => {
   res.status(200).send({ msg: "Welcome to the API!" });
 });
 
-appRouter.post("/api/auth", async (req: Request, res: Response) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).send({ msg: "Username and password are required." });
-  }
-  const user = await prisma.user.findFirst({
-    where: { username },
-  });
-  if (!user || user.password !== password) {
-    return res.status(401).send({ msg: "Invalid username or password." });
-  }
-
-  req.session.user = user;
-  return res
-    .status(200)
-    .send({ msg: "Authentication successful.", user: req.session.user });
-});
-
 appRouter.get("/api/status", (req: Request, res: Response) => {
   req.sessionStore.get(req.sessionID, (err, session) => {
     if (err) {

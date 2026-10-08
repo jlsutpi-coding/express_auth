@@ -8,6 +8,7 @@ import {
 } from "express-validator";
 import { prisma } from "../lib/prisma";
 import type { Prisma } from "../../generated/prisma";
+import { hashPassword } from "../util/helpers";
 
 const userRouter = express.Router();
 
@@ -40,6 +41,9 @@ userRouter.post(
     const data = matchedData(req) as Prisma.UserCreateInput;
 
     try {
+      console.log("Received user data:", data);
+      data.password = hashPassword(data.password);
+      console.log("Hashed user:", data);
       const createdUsers = await prisma.user.create({
         data: data,
       });

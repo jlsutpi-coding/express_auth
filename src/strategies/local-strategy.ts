@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { mockUsers } from "../util/constants";
 import { prisma } from "../lib/prisma";
+import { comparePassword } from "../util/helpers";
 
 passport.serializeUser((user, done) => {
   console.log("Serializing user:", user);
@@ -33,7 +33,7 @@ export default passport.use(
       if (!user) {
         return done(null, false, { message: "Invalid username or password." });
       }
-      if (user.password !== password) {
+      if (!comparePassword(password, user.password)) {
         return done(null, false, { message: "Invalid username or password." });
       }
       return done(null, user);
