@@ -13,3 +13,10 @@ model User {
   displayName String?
   password    String
 }
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String   @db.MediumText
+  expiresAt DateTime
+}
