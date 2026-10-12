@@ -1,13 +1,9 @@
-//
-// This file is used to extend the Express namespace with a custom User interface.
+// types/express.d.ts
+import type { User as PrismaUser } from "../generated/prisma";
+
 declare global {
   namespace Express {
-    interface User {
-      id: number;
-      username: string;
-      displayName: string | null;
-      password: string;
-    }
+    interface User extends PrismaUser {}
   }
 }
 

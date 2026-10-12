@@ -8,10 +8,22 @@ datasource db {
 }
 
 model User {
-  id          Int     @id @default(autoincrement())
-  username    String  @unique
+  id          String           @id @default(cuid())
+  username    String           @unique
   displayName String?
-  password    String
+  password    String?
+  identities  SocialIdentity[]
+}
+
+model SocialIdentity {
+  id         String @id @default(cuid())
+  provider   String // e.g., "DISCORD", "GOOGLE"
+  providerId String // The user's ID from the provider
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+
+  @@unique([provider, providerId])
+  @@index([userId])
 }
 
 model Session {

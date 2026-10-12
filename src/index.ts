@@ -1,9 +1,9 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import session from "express-session";
 import appRouter from "./routes";
 import passport from "passport";
-import "./strategies/local-strategy";
+// import "./strategies/local-strategy";
+import "./strategies/discord-strategy";
 
 import expressSession from "express-session";
 import "dotenv/config";
@@ -57,6 +57,17 @@ app.post("/api/auth/logout", (req, res) => {
     res.status(200).send({ msg: "User logged out successfully." });
   });
 });
+
+app.get("/api/auth/discord", passport.authenticate("discord"));
+app.get(
+  "/api/auth/discord/redirect",
+  passport.authenticate("discord"),
+  (req, res) => {
+    return res
+      .status(200)
+      .send({ msg: "Discord authentication successful.", user: req.user });
+  },
+);
 
 app.use(appRouter);
 
