@@ -63,6 +63,7 @@ app.get(
   "/api/auth/discord/redirect",
   passport.authenticate("discord"),
   (req, res) => {
+    console.log(req.session);
     return res
       .status(200)
       .send({ msg: "Discord authentication successful.", user: req.user });

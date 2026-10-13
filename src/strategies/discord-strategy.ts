@@ -1,6 +1,26 @@
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
 import { prisma } from "../lib/prisma";
+import type { User } from "../util/constants";
+
+passport.serializeUser((user, done) => {
+  const u = user as User;
+  done(null, u.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: id as string },
+    });
+    if (!user) {
+      return done(new Error("User not found"));
+    }
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
 
 export default passport.use(
   new DiscordStrategy(
@@ -12,8 +32,6 @@ export default passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log("Discord profile:", profile);
-
         // 1. Look for existing identity
         const existingIdentity = await prisma.socialIdentity.findUnique({
           where: {
