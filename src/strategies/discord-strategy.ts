@@ -1,7 +1,9 @@
 import passport from "passport";
+import "dotenv/config";
 import { Strategy as DiscordStrategy } from "passport-discord";
 import { prisma } from "../lib/prisma";
-import type { User } from "../util/constants";
+import type { User } from "../../generated/prisma";
+import { env } from "../config/env";
 
 passport.serializeUser((user, done) => {
   const u = user as User;
@@ -25,9 +27,9 @@ passport.deserializeUser(async (id, done) => {
 export default passport.use(
   new DiscordStrategy(
     {
-      clientID: "1559224360768774355",
-      clientSecret: "dySTvdiOBghnovqNrE1KpzvYaYuvykCX",
-      callbackURL: "http://localhost:3000/api/auth/discord/redirect",
+      clientID: env.DISCORD_CLIENT_ID,
+      clientSecret: env.DISCORD_CLIENT_SECRET,
+      callbackURL: env.DISCORD_CALLBACK_URL,
       scope: ["identify", "email", "guilds"],
     },
     async (accessToken, refreshToken, profile, done) => {
