@@ -45,18 +45,6 @@ app.get("/api/auth/status", (req, res) => {
   }
 });
 
-app.post("/api/auth/logout", (req, res) => {
-  if (!req.user) {
-    return res.status(401).send({ msg: "User is not authenticated." });
-  }
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).send({ msg: "Error occurred while logging out." });
-    }
-    res.status(200).send({ msg: "User logged out successfully." });
-  });
-});
-
 app.use(appRouter);
 
 app.listen(PORT, () => {

@@ -9,6 +9,7 @@ import { hashPassword } from "../util/helpers";
 import { prisma } from "../lib/prisma";
 import passport from "passport";
 import "../strategies/discord-strategy";
+import "../strategies/local-strategy";
 
 const authRouter = express.Router();
 
@@ -49,6 +50,13 @@ authRouter.post(
   },
 );
 
+authRouter.post("/login", passport.authenticate("local"), (req, res) => {
+  console.log(req.session);
+  return res
+    .status(200)
+    .send({ msg: "Authentication successful.", user: req.user });
+});
+
 authRouter.get("/discord", passport.authenticate("discord"));
 authRouter.get(
   "/discord/redirect",
@@ -61,4 +69,21 @@ authRouter.get(
   },
 );
 
+authRouter.post("/logout", (req, res) => {
+  if (!req.user) {
+    return res.status(401).send({ msg: "User is not authenticated." });
+  }
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).send({ msg: "Error occurred while logging out." });
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).send({ msg: "Error destroying session." });
+      }
+      res.clearCookie("connect.sid");
+      return res.status(200).send({ msg: "User logged out successfully." });
+    });
+  });
+});
 export default authRouter;
