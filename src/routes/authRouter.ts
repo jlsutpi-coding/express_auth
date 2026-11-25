@@ -7,6 +7,8 @@ import { checkSchema, matchedData, validationResult } from "express-validator";
 import { hashPassword } from "../util/helpers";
 
 import { prisma } from "../lib/prisma";
+import passport from "passport";
+import "../strategies/discord-strategy";
 
 const authRouter = express.Router();
 
@@ -44,6 +46,18 @@ authRouter.post(
       console.error("Error creating user:", error);
       return res.status(500).send({ msg: "Internal server error." });
     }
+  },
+);
+
+authRouter.get("/discord", passport.authenticate("discord"));
+authRouter.get(
+  "/discord/redirect",
+  passport.authenticate("discord"),
+  (req, res) => {
+    console.log(req.session);
+    return res
+      .status(200)
+      .send({ msg: "Discord authentication successful.", user: req.user });
   },
 );
 
